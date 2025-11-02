@@ -1,0 +1,35 @@
+/* Impostazioni globali per pulire lo stile del browser */
+body {
+    font-family: Arial, sans-serif; /* Un font pulito */
+    background-color: #f0f2f5; /* Un grigio chiaro per lo sfondo */
+    margin: 0;
+    padding: 0;
+}
+
+/* Stile per il titolo in alto */
+header {
+    background-color: #ffffff;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Piccola ombra */
+}
+
+/* Questo è il "trucco" per le tre colonne */
+/* Usiamo una tecnologia chiamata "Flexbox" */
+.container {
+    display: flex; /* Mette gli elementi figli (le colonne) uno accanto all'altro */
+    justify-content: space-between; /* Spazio tra le colonne */
+    padding: 20px;
+    gap: 20px; /* Spazio di 20px tra le colonne */
+}
+
+/* Stile per tutte le colonne */
+.colonna {
+    background-color: #ffffff; /* Sfondo bianco */
+    border-radius: 8px; /* Angoli arrotondati */
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+    /* Questo dice a ogni colonna di occupare 1/3 dello spazio */
+    flex-basis: 33%;
+}
