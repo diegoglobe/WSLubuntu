@@ -1,0 +1,34 @@
+const express = require('express');
+const cors = require('cors'); // Importa 'cors'
+
+const app = express();
+const port = 3000; // Il nostro backend girerà sulla porta 3000
+
+app.use(cors()); // Applica il "lasciapassare"
+app.use(express.json()); // Permette al server di capire i dati (JSON) inviati dal frontend
+
+// Questo è il nostro "cameriere"
+// // Ascolta le richieste "POST" all'indirizzo "/api/chat"
+app.post('/api/chat', (req, res) => {
+//
+//     // 1. Legge il messaggio inviato dal frontend
+         const messaggioUtente = req.body.messaggio;
+         console.log("Messaggio ricevuto dal frontend:", messaggioUtente);
+//
+//     // 2. CREA UNA RISPOSTA (per ora finta)
+         const rispostaBot = {
+                             testo: `Ho ricevuto il tuo messaggio: "${messaggioUtente}". Sto elaborando.`,
+                                     profilo: {
+                                                 nome: "Profilo (dal Backend)",
+                                                 skill: "Node.js & Express",
+                                                 rating: "Ottimo"
+                             }
+         };
+//
+        // 3. Invia la risposta al frontend
+          res.json(rispostaBot);
+         });
+       // Mette il server in ascolto sulla porta 3000
+         app.listen(port, () => {
+         console.log(`Backend in ascolto su http://localhost:${port}`);
+        });
