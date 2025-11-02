@@ -10,25 +10,71 @@
 <body>
 
     <header>
-        <h1>HireMate</h1>
-    </header>
+    <h1>La MIA Fantastica Piattaforma CV</h1>
+
+    <nav class="tab-navigation">
+        <ul class="tab-list">
+            <li class="tab-item active" data-role="Sviluppatore Frontend">
+                Sviluppatore Frontend
+                <span class="close-tab">×</span>
+            </li>
+            <li class="tab-item" data-role="Data Analyst">
+                Data Analyst
+                <span class="close-tab">×</span>
+            </li>
+        </ul>
+        <button id="add-tab-button">+</button>
+    </nav>
+</header>
 
     <main class="container">
         <div class="colonna" id="colonna-fonti">
-            <h2>Carica CV</h2>
-            <p>(Qui caricheremo i CV)</p>
-        </div>
+    <h2>Fonti CV</h2>
+
+    <div id="drop-area">
+        <p>Trascina qui i tuoi CV</p>
+        <p>o</p>
+        <button id="bottone-carica">Seleziona File</button>
+    </div>
+
+    <h3 class="sottotitolo">Collegamenti Email</h3>
+    <div id="lista-email">
+        <p>(Nessuna email collegata)</p>
+    </div>
+</div>
 
         <div class="colonna" id="colonna-chatbot">
-            <h2>Chatbot AI</h2>
-            <p>(Qui parleremo con l'AI)</p>
+    <h2>Chatbot AI</h2>
+
+    <div id="chat-display">
+        <div class="message bot">
+            <p>Ciao! Sono il tuo assistente AI. Carica i CV a sinistra e dimmi cosa devo cercare.</p>
         </div>
+    </div>
+
+    <div id="chat-input-area">
+        <input type="text" id="chat-input" placeholder="Chiedimi qualcosa sui CV...">
+        <button id="send-button">Invia</button>
+    </div>
+</div>
 
         <div class="colonna" id="colonna-output">
-            <h2>Profili Valutati</h2>
-            <p>(Qui vedremo i risultati)</p>
-        </div>
-    </main>
+        <h2>Profili Valutati</h2>
 
+    <ol id="lista-profili">
+        </ol>
+
+    <button id="send-thanks-button">
+        Invia Email Ringraziamento
+    </button>
+    </div> ``
+    <h2>Profili Valutati</h2>
+
+    <ol id="lista-profili">
+
+        </ol>
+</div>
+
+    <script src="main.js"></script>
 </body>
 </html>
