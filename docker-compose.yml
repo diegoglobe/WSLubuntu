@@ -1,0 +1,42 @@
+
+services:
+  # 1. Servizio FRONTEND (come prima, ma con percorsi aggiornati)
+  frontend:
+    image: nginx:alpine
+    container_name: frontend
+    ports:
+      - "8080:80"
+    volumes:
+      # NOTA IL NUOVO PERCORSO: ./frontend/src
+      - ./frontend/src:/usr/share/nginx/html:ro
+
+  # 2. NUOVO Servizio BACKEND
+  backend:
+    image: node:18-alpine # Usiamo un'immagine con Node.js
+    container_name: backend
+    ports:
+      - "3000:3000" # Esponiamo la porta 3000
+    working_dir: /app # Imposta la cartella di lavoro dentro il container
+    volumes:
+      # Collega la nostra cartella locale ./backend
+      # alla cartella /app dentro il container
+      - ./backend:/app
+
+    # Comando per installare "Express" e avviare il server
+    command: sh -c "npm install && npm start"
+
+  #3 Nuovo Servizio N8N
+  n8n:
+    image: n8nio/n8n:latest # Usa l'immagine ufficiale di n8n
+    container_name: server-cv-n8n
+    ports:
+      - "5678:5678" # n8n gira sulla porta 5678
+    volumes:
+      - n8n_data:/home/node/.n8n # Collega i dati di n8n a un volume gestito da Docker
+    environment:
+      - GENERIC_TIMEZONE=Europe/Rome # Impostiamo il fuso orario
+    restart: unless-stopped # Riavvia sempre n8n a meno che non lo fermiamo noi
+
+# Definiamo il "volume" che Docker userà per salvare i dati di n8n
+volumes:
+  n8n_data:

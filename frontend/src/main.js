@@ -6,9 +6,23 @@ document.addEventListener('DOMContentLoaded', () => {
     // Tutte le 'const' che cercano elementi nell'HTML
     // devono stare qui, all'inizio del 'DOMContentLoaded'.
     // ==========================================================
+// ==========================================================
+    // STEP 1: TROVARE TUTTI GLI ELEMENTI
+    // Tutte le 'const' che cercano elementi nell'HTML
+    // devono stare qui, all'inizio del 'DOMContentLoaded'.
+    // ==========================================================
     
     // Colonna Sinistra
     const dropArea = document.getElementById('drop-area');
+    const fileListContainer = document.getElementById('file-list-container');
+    const fileList = document.getElementById('file-list');
+    const uploadButton = document.getElementById('upload-button');
+    const bottoneCarica = document.getElementById('bottone-carica'); // Per il click "Seleziona File"
+    const fileInput = document.getElementById('file-input'); // L'input file nascosto
+    const showEmailModalButton = document.getElementById('show-email-modal-button');
+    const emailModal = document.getElementById('email-modal');
+    const closeModalButton = document.getElementById('close-modal-button');
+    const emailForm = document.getElementById('email-form');
     
     // Colonna Centrale
     const chatDisplay = document.getElementById('chat-display');
@@ -22,6 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Header (Schede)
     const tabList = document.querySelector('.tab-list');
     const addTabButton = document.getElementById('add-tab-button');
+    // ----------------------------------
 
 
     // ==========================================================
@@ -30,18 +45,56 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- GESTIONE DEL "DRAG-AND-DROP" ---
 
+    let fileBuffer = []; // Un "buffer" temporaneo per i file
+
     ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
         dropArea.addEventListener(eventName, preventDefaults, false);
         document.body.addEventListener(eventName, preventDefaults, false);
     });
+
     dropArea.addEventListener('dragenter', () => dropArea.classList.add('drag-over'));
+
     dropArea.addEventListener('dragleave', () => dropArea.classList.remove('drag-over'));
+
     dropArea.addEventListener('drop', (e) => {
         dropArea.classList.remove('drag-over');
-        const files = e.dataTransfer.files;
+
+        // Convertiamo in un array per gestirlo meglio
+        const files = Array.from(e.dataTransfer.files);
+
         if (files.length > 0) {
-            console.log("File Rilasciati:", files);
-            alert("Hai rilasciato " + files[0].name);
+            fileBuffer.push(...files); // Aggiunge i nuovi file al buffer
+            aggiornaListaFile(); // CHIAMA LA NUOVA FUNZIONE (NESSUN ALERT)
+        }
+    });
+
+    function aggiornaListaFile() {
+        fileList.innerHTML = ""; // Pulisci la lista
+
+        if (fileBuffer.length > 0) {
+            // Mostra il contenitore e il pulsante
+            fileListContainer.style.display = 'block';
+            uploadButton.classList.remove('hidden');
+
+            // Aggiungi ogni file come <li>
+            fileBuffer.forEach(file => {
+                const li = document.createElement('li');
+                li.textContent = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+                fileList.appendChild(li);
+            });
+        } else {
+            // Nascondi se il buffer è vuoto
+            fileListContainer.style.display = 'none';
+            uploadButton.classList.add('hidden');
+        }
+    }
+
+    uploadButton.addEventListener('click', () => {
+        if (fileBuffer.length > 0) {
+            alert(`Azione simulata: Caricamento di ${fileBuffer.length} file...`);
+            // Svuota il buffer e nascondi la lista
+            fileBuffer = [];
+            aggiornaListaFile();
         }
     });
 
@@ -49,22 +102,99 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         e.stopPropagation();
     }
+    // (Qui finisce il codice del Drag-and-Drop)
+    // ...
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    // --- AGGIUNGI QUESTO NUOVO BLOCCO QUI ---
+
+    // --- GESTIONE CLICK "SELEZIONA FILE" ---
+
+    // 1. Quando l'utente clicca il *nostro* pulsante...
+    bottoneCarica.addEventListener('click', () => {
+        fileInput.click(); // ...noi clicchiamo *l'input nascosto*.
+    });
+
+    // 2. Quando l'utente ha scelto i file dall'input nascosto...
+    fileInput.addEventListener('change', () => {
+        // Prendiamo i file e li convertiamo in un array
+        const files = Array.from(fileInput.files);
+
+        if (files.length > 0) {
+            fileBuffer.push(...files); // Li aggiungiamo al buffer (lo stesso del drag & drop)
+            aggiornaListaFile(); // Aggiorniamo la UI
+        }
+
+        // Pulisce l'input per permettere di riselezionare gli stessi file
+        fileInput.value = null;
+    });
+    // -----------------------------------------
 
     // --- GESTIONE DELLA CHAT ---
+    // (Il resto del codice continua qui...)
 
+    // AGGIUNGI L'ASCOLTATORE PER IL NUOVO PULSANTE "CARICA"
+    uploadButton.addEventListener('click', () => {
+        if (fileBuffer.length > 0) {
+            alert(`Azione simulata: Caricamento di ${fileBuffer.length} file...`);
+            // Qui in futuro chiameremo il backend per l'upload
+
+            // Svuota il buffer e nascondi la lista
+            fileBuffer = [];
+            aggiornaListaFile();
+        }
+    });
+
+    // --- GESTIONE DELLA CHAT ---
+    // --- GESTIONE DELLA CHAT ---
+
+    // ASCOLTATORE SUL PULSANTE "INVIA"
     sendButton.addEventListener('click', inviaMessaggio);
+
+    // ASCOLTATORE SUL TASTO "INVIO"
     chatInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
             inviaMessaggio();
         }
     });
 
+    // QUESTA È LA FUNZIONE "CAPO" CHE MANCAVA
     function inviaMessaggio() {
+        console.log("CLICK! Funzione partita."); // Messaggio di test
         const testoMessaggio = chatInput.value.trim();
+
         if (testoMessaggio !== "") {
             aggiungiMessaggio(testoMessaggio, 'user');
             chatInput.value = "";
-            setTimeout(simulaRispostaBot, 1000);
+
+            // Chiama il backend
+            chiamaBackend(testoMessaggio);
+        }
+    }
+    async function chiamaBackend(messaggio) {
+        try {
+            // "fetch" è il modo moderno di fare chiamate di rete in JS
+            const response = await fetch('http://localhost:3000/api/chat', {
+                method: 'POST', // Tipo di richiesta
+                headers: {
+                    'Content-Type': 'application/json' // Diciamo che stiamo inviando JSON
+                },
+                body: JSON.stringify({ messaggio: messaggio }) // Il dato da inviare
+            });
+
+            // Aspetta la risposta e convertila da JSON
+            const data = await response.json();
+
+            // Ora usa i dati VERI dal backend
+            aggiungiMessaggio(data.testo, 'bot');
+            aggiungiProfilo(data.profilo); // Funzione potenziata
+
+        } catch (error) {
+            console.error("Errore nella chiamata al backend:", error);
+            aggiungiMessaggio("Ops, c'è stato un errore con il server.", 'bot');
         }
     }
 
@@ -80,36 +210,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- GESTIONE OUTPUT (Profili e Bot) ---
 
-    function simulaRispostaBot() {
-        aggiungiMessaggio("Ho analizzato i CV e trovato un profilo interessante.", 'bot');
-        aggiungiProfiloFinto();
-    }
-
-    function aggiungiProfiloFinto() {
-        const nomi = ["Mario Rossi", "Giulia Bianchi", "Luca Verdi", "Anna Neri"];
-        const skill = ["React Developer", "Node.js Backend", "UX Designer", "Data Analyst"];
-        const ratings = ["Ottimo", "Buono"];
-
-        const nomeCasuale = nomi[Math.floor(Math.random() * nomi.length)];
-        const skillCasuale = skill[Math.floor(Math.random() * skill.length)];
-        const ratingCasuale = ratings[Math.floor(Math.random() * ratings.length)];
+    function aggiungiProfilo(profilo) {
+        // 'profilo' è ora l'oggetto { nome, skill, rating }
+        // che arriva dal backend
 
         const li = document.createElement('li');
         li.classList.add('profilo-card');
 
         const divInfo = document.createElement('div');
         divInfo.classList.add('info');
-        divInfo.innerHTML = `<h4>${nomeCasuale}</h4><p>${skillCasuale}</p>`;
+        // Usiamo i dati REALI
+        divInfo.innerHTML = `<h4>${profilo.nome}</h4><p>${profilo.skill}</p>`;
 
         const divRating = document.createElement('div');
-        divRating.classList.add('rating', ratingCasuale === "Ottimo" ? 'ottimo' : 'buono');
-        divRating.textContent = ratingCasuale;
+        divRating.classList.add('rating');
+        divRating.textContent = profilo.rating;
+
+        if (profilo.rating === "Ottimo") {
+            divRating.classList.add('ottimo');
+        } else {
+            divRating.classList.add('buono');
+        }
 
         li.appendChild(divInfo);
         li.appendChild(divRating);
         listaProfili.appendChild(li);
     }
-    
+
+    // La funzione 'aggiungiMessaggio' NON CAMBIA.
+
     // Pulsante Email Ringraziamento
     sendThanksButton.addEventListener('click', () => {
         alert("Azione simulata: Invio email di ringraziamento a tutti i candidati in lista!");
@@ -153,19 +282,81 @@ document.addEventListener('DOMContentLoaded', () => {
             tab.classList.remove('active');
         });
         schedaDaAttivare.classList.add('active');
-        
+
         const ruoloSelezionato = schedaDaAttivare.dataset.role;
         chatDisplay.innerHTML = ""; // Svuota chat
         listaProfili.innerHTML = ""; // Svuota profili
         aggiungiMessaggio(`Ciao! Ora stiamo cercando profili per: "${ruoloSelezionato}". Dimmi i requisiti.`, 'bot');
     }
-    
+
     // --- INIZIALIZZAZIONE ---
     // Simula il click sulla prima scheda all'avvio
     const primaSchedaEsistente = tabList.querySelector('.tab-item');
     if (primaSchedaEsistente) {
         attivaScheda(primaSchedaEsistente);
     }
+// (Il codice delle schede "INIZIALIZZAZIONE" dovrebbe essere qui sopra)
+    // ...
 
+    // --- GESTIONE MODAL EMAIL ---
+    
+    // Apri il modal
+    showEmailModalButton.addEventListener('click', () => {
+        emailModal.classList.remove('hidden');
+    });
 
-}); // <-- QUESTA CHIUDE IL DOMCONTENTLOADED
+    // Chiudi il modal (cliccando la 'x')
+    closeModalButton.addEventListener('click', () => {
+        emailModal.classList.add('hidden');
+    });
+
+    // Chiudi il modal (cliccando sullo sfondo scuro)
+    emailModal.addEventListener('click', (e) => {
+        // Se ho cliccato sull'overlay (lo sfondo)
+        // e NON sul contenuto del modal
+        if (e.target === emailModal) {
+            emailModal.classList.add('hidden');
+        }
+    });
+
+    // Gestione del click sul pulsante "Connetti"
+    emailForm.addEventListener('submit', async (e) => {
+    e.preventDefault(); // Blocca l'invio del form (come prima)
+
+    // 1. Prendiamo i valori dal form
+    const email = document.getElementById('email-address').value;
+    const password = document.getElementById('email-password').value;
+    const server = document.getElementById('email-imap-server').value;
+
+    try {
+        // 2. INVIAMO I DATI AL NOSTRO BACKEND
+        const response = await fetch('http://localhost:3000/api/connect-email', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: email,
+                password: password,
+                server: server
+            })
+        });
+
+        const data = await response.json();
+
+        // 3. Mostriamo un feedback all'utente
+        alert(data.message); // Mostra il messaggio di successo dal backend
+
+        // Chiudi il modal e pulisci il form
+        emailModal.classList.add('hidden');
+        emailForm.reset();
+
+    } catch (error) {
+        console.error("Errore nell'invio dati email:", error);
+        alert("Errore: impossibile contattare il server.");
+    }
+});
+
+// ... E POI C'È LA PARENTESI FINALE:
+});
+ // <-- QUESTA CHIUDE IL DOMCONTENTLOADED
