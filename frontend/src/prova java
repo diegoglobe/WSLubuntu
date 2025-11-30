@@ -1,0 +1,26 @@
+// 1. Prendiamo l'email dal nodo precedente (il Webhook)
+//    Nota: usiamo $json per accedere ai dati in ingresso
+const email = $input.first().json.body.email;
+
+// 2. Messaggio per i log (puoi vederlo nell'output del nodo)
+//    Nota: usiamo i backtick ` (vicino al tasto 1)
+console.log(`Simulazione test IMAP per: ${email}`);
+
+// 3. Questa è la nostra logica di test finta:
+//    Se l'email contiene la parola "successo", funziona.
+if (email.includes('successo')) {
+    
+    // SUCCESSO:
+    // Invia i dati all'uscita 0 (la prima)
+    // Formato: [ [array_per_uscita_0], [array_per_uscita_1] ]
+    return [ [ { json: $json } ], [] ]; 
+
+} else {
+    
+    // FALLIMENTO:
+    // Invia i dati all'uscita 1 (la seconda)
+    // Formato: [ [array_per_uscita_0], [array_per_uscita_1] ]
+    return [ [], [ { json: $json } ] ];
+
+}
+// NON CI DEVE ESSERE NESSUN'ALTRA '}' DOPO QUESTO PUNTO

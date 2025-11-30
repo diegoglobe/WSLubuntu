@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Piattaforma CV</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header>
+        <h1>La MIA Fantastica Piattaforma CV</h1>
+
+        <nav class="tab-navigation">
+            <ul class="tab-list">
+                <li class="tab-item active" data-role="Sviluppatore Frontend">
+                    Sviluppatore Frontend
+                    <span class="close-tab">×</span>
+                </li>
+                <li class="tab-item" data-role="Data Analyst">
+                    Data Analyst
+                    <span class="close-tab">×</span>
+                </li>
+            </ul>
+            <button id="add-tab-button">+</button>
+        </nav>
+    </header>
+
+    <main class="container">
+
+        <div class="colonna" id="colonna-fonti">
+            <h2>Fonti CV</h2>
+
+            <div id="drop-area">
+                <p>Trascina qui i tuoi CV</p>
+                <p>o</p>
+                <button id="bottone-carica">Seleziona File</button>
+                <input type="file" id="file-input" multiple>
+
+                <div id="file-list-container">
+                    <h4>File pronti per il caricamento:</h4>
+                    <ul id="file-list">
+                    </ul>
+                    <button id="upload-button" class="hidden">Carica File</button>
+                </div>
+            </div>
+            <h3 class="sottotitolo">Collegamenti Email</h3>
+            <div id="lista-email">
+                <p>(Nessuna email collegata)</p>
+            </div>
+
+            <button id="show-email-modal-button">Collega Casella Email</button>
+        </div>
+
+        <div class="colonna" id="colonna-chatbot">
+            <h2>Chatbot AI</h2>
+
+            <div id="chat-display">
+                <div class="message bot">
+                    <p>Ciao! Sono il tuo assistente AI. Carica i CV a sinistra e dimmi cosa devo cercare.</p>
+                </div>
+            </div>
+
+            <div id="chat-input-area">
+                <input type="text" id="chat-input" placeholder="Chiedimi qualcosa sui CV...">
+                <button id="send-button">Invia</button>
+            </div>
+        </div>
+
+        <div class="colonna" id="colonna-output">
+            <h2>Profili Valutati</h2>
+
+            <ol id="lista-profili">
+            </ol>
+
+            <button id="send-thanks-button">
+                Invia Email Ringraziamento
+            </button>
+        </div>
+
+    </main>
+
+    <script src="main.js"></script>
+
+    <div id="email-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+
+            <span id="close-modal-button" class="close-button">×</span>
+
+            <h3>Collega una casella email</h3>
+            <p>Inserisci i dati per il collegamento IMAP.</p>
+
+            <form id="email-form">
+                <label for="email-address">Indirizzo Email:</label>
+                <input type="email" id="email-address" required>
+
+                <label for="email-password">Password (o App Password):</label>
+                <input type="password" id="email-password" required>
+
+                <label for="email-imap-server">Server IMAP:</label>
+                <input type="text" id="email-imap-server" placeholder="es. imap.gmail.com" required>
+
+                <button type="submit" id="connect-email-button">Connetti</button>
+            </form>
+        </div>
+    </div>
+    <script src="main.js"></script>
+
+    <div id="email-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+
+            <span id="close-modal-button" class="close-button">×</span>
+
+            <h3>Collega una casella email</h3>
+            <p>Inserisci i dati per il collegamento IMAP.</p>
+
+            <form id="email-form">
+                <label for="email-address">Indirizzo Email:</label>
+                <input type="email" id="email-address" required>
+
+                <label for="email-password">Password (o App Password):</label>
+                <input type="password" id="email-password" required>
+
+                <label for="email-imap-server">Server IMAP:</label>
+                <input type="text" id="email-imap-server" placeholder="es. imap.gmail.com" required>
+
+                <button type="submit" id="connect-email-button">Connetti</button>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>
+</body>
+
+</html>
